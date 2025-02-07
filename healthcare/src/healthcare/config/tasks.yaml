@@ -1,0 +1,38 @@
+medication_tasks:
+  - task: "medication_schedule"
+    description: "Create and manage patient medication schedules"
+    agent: "medication_manager"
+    dependencies: []
+    expected_output: "Detailed medication schedule with timing and dosage information"
+
+  - task: "adherence_monitoring"
+    description: "Monitor and report patient medication adherence"
+    agent: "medication_manager"
+    dependencies: ["medication_schedule"]
+    expected_output: "Adherence report with compliance statistics and alerts"
+
+appointment_tasks:
+  - task: "schedule_appointment"
+    description: "Schedule and coordinate patient appointments"
+    agent: "appointment_scheduler"
+    dependencies: []
+    expected_output: "Confirmed appointment details with provider information"
+
+  - task: "appointment_followup"
+    description: "Handle post-appointment communications and scheduling"
+    agent: "appointment_scheduler"
+    dependencies: ["schedule_appointment"]
+    expected_output: "Follow-up schedule and communication log"
+
+health_advice_tasks:
+  - task: "health_assessment"
+    description: "Analyze patient health data and create personalized recommendations"
+    agent: "health_advisor"
+    dependencies: []
+    expected_output: "Comprehensive health assessment report"
+
+  - task: "progress_monitoring"
+    description: "Track and report patient progress on health goals"
+    agent: "health_advisor"
+    dependencies: ["health_assessment"]
+    expected_output: "Progress report with achievements and recommendations" 

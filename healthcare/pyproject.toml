@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "healthcare"
+version = "0.1.0"
+authors = [
+    { name = "Your Name", email = "your.email@example.com" },
+]
+description = "Healthcare Management System using CrewAI"
+requires-python = ">=3.10,<3.13" 
