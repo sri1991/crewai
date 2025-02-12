@@ -28,13 +28,37 @@ class ExcelToTextTool(BaseTool):
         # For simplicity, we'll use the sync version
         return self._run(excel_path)
 
-# Create an agent with the custom tool
+class DocumentClassifierWithVerification(BaseTool):
+    name = "document_classifier"
+    description = "Classifies documents with human verification"
+    
+    def _run(self, content: str, suggested_category: str) -> str:
+        """Classify document with human verification."""
+        print("\n=== Document Classification Verification ===")
+        print(f"Document Content Preview: {content[:200]}...")
+        print(f"\nSuggested Classification: {suggested_category}")
+        
+        while True:
+            response = input("\nApprove this classification? (yes/no): ").lower().strip()
+            if response in ['yes', 'no']:
+                break
+            print("Please enter 'yes' or 'no'")
+        
+        if response == 'yes':
+            return suggested_category
+        return "Unknown"
+
+    def _arun(self, content: str, suggested_category: str) -> str:
+        """Async implementation of the tool."""
+        return self._run(content, suggested_category)
+
+# Create an agent with the custom tools
 classifier_agent = Agent(
     role='Document Classifier',
     goal='Accurately classify documents into appropriate categories',
     backstory="""You are an expert document classifier with deep understanding
                 of various document types and categories.""",
-    tools=[ExcelToTextTool()],
+    tools=[ExcelToTextTool(), DocumentClassifierWithVerification()],
     verbose=True
 )
 
@@ -44,13 +68,14 @@ def create_classification_task(excel_path: str) -> Task:
         description=f"""
         1. Use the excel_to_text_converter tool to convert the Excel file at {excel_path} to text
         2. Analyze the converted text content
-        3. Classify the document into one of the following categories:
+        3. Determine the most appropriate category from:
            - Financial Report
            - Technical Documentation
            - Marketing Material
            - Legal Document
            - Other (specify)
-        4. Provide a brief explanation for the classification
+        4. Use the document_classifier tool to get human verification for your classification
+        5. Only provide the verified classification in your final response
         """,
         agent=classifier_agent
     )
@@ -83,4 +108,4 @@ if __name__ == "__main__":
     
     # Run the classification
     result = main()
-    print("Classification Result:", result)
+    print("\nFinal Classification:", result)

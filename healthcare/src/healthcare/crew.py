@@ -4,6 +4,7 @@ import yaml
 from pathlib import Path
 import os
 import google.generativeai as genai
+from .tools.tool_manager import ToolManager
 
 class HealthcareCrew:
     def __init__(self):
@@ -11,6 +12,7 @@ class HealthcareCrew:
         # Configure Gemini
         genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
         self.model = genai.GenerativeModel('gemini-1.5-pro')
+        self.tool_manager = ToolManager()
         self.agents = self._load_agents()
         self.tasks = self._load_tasks()
 
@@ -21,6 +23,7 @@ class HealthcareCrew:
 
         agents = {}
         for agent_id, config in agents_config.items():
+            tools = self.tool_manager.get_tools(config["tools"])
             agents[agent_id] = Agent(
                 name=config["name"],
                 role=config["role"],
@@ -28,8 +31,8 @@ class HealthcareCrew:
                 backstory=config["backstory"],
                 verbose=config["verbose"],
                 allow_delegation=True,
-                tools=self._get_tools(config["tools"]),
-                llm=self.model  # Use Gemini model
+                tools=tools,
+                llm=self.model
             )
         return agents
 
